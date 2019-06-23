@@ -15,11 +15,6 @@ newV = np.ones((WIDTH, HEIGHT))
 matrixProcessing.setVBoundaries(newV)
 matrixProcessing.setVBoundaries(oldV)
 
-oldT = np.empty((WIDTH, HEIGHT))
-newT = np.ones((WIDTH, HEIGHT))
-matrixProcessing.setTBoundaries(newT)
-matrixProcessing.setTBoundaries(oldT)
-
 HX = np.empty((WIDTH, HEIGHT))
 HY = np.empty((WIDTH, HEIGHT))
 
@@ -31,9 +26,7 @@ matrixProcessing.calculateHY(HY)
 biggestVariation = math.inf
 iterationNumber = 0
 
-while biggestVariation > ERROR_TOLERANCE: 
-    firstInteration = False
-
+while biggestVariation > ERROR_TOLERANCE:
     aux = oldU
     oldU = newU
     newU = aux
@@ -48,18 +41,44 @@ while biggestVariation > ERROR_TOLERANCE:
     biggestVariation = max( np.amax(np.absolute(newU-oldU)), np.amax(np.absolute(newV-oldV)) )
     iterationNumber += 1
 
-    if iterationNumber == 1:
-        print("i = ", iterationNumber)
-        print("Current variation ", biggestVariation)
     if (iterationNumber % 1000) == 0:
         print("i = ", iterationNumber)
         print("Current variation ", biggestVariation)
+
+
+oldT = np.empty((WIDTH, HEIGHT))
+newT = np.ones((WIDTH, HEIGHT))
+matrixProcessing.setTBoundaries(newT)
+matrixProcessing.setTBoundaries(oldT)
+
+print("Start calculating T")
+biggestVariation = math.inf
+iterationNumber = 0
+while biggestVariation > ERROR_TOLERANCE:
+
+    aux = oldT
+    oldT = newT
+    newT = aux
+
+    matrixProcessing.calculateT(newT, oldT, oldU, oldV, HX, HY)
+
+    biggestVariation = np.amax(np.absolute(newT-oldT))
+    iterationNumber += 1
+    
+    if (iterationNumber % 1000) == 0:
+        print("i = ", iterationNumber)
+        print("Current variation ", biggestVariation)
+
+
 
 utils.printToFile("Final U\n")
 utils.printArrayMirrored(newU)
 
 utils.printToFile("Final V\n")
 utils.printArrayMirrored(newV)
+
+utils.printToFile("Final T\n")
+utils.printArrayMirrored(newT)
 
 utils.printToFile("HX\n")
 utils.printArrayMirrored(HX)

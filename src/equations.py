@@ -81,6 +81,10 @@ def calculateTItem(i,j, U, V, T, HX, HY):
     magneticTerm = (HX[i,j]**2 * ((U[i+1,j]-U[i-1,j])/(2*dx))+ HY[i,j]**2 * ((V[i,j+1]-V[i,j-1])/(2*dy))+HX[i,j]*HY[i,j]*((V[i+1,j]-V[i-1,j])/(2*dx)+(U[i,j+1]-U[i,j-1])/(2*dy)))* MAGNETIC_ECKERT*(1+CHI) 
     previousTerm = U[i,j]*((T[i+1,j]-T[i-1,j])/(2*dx)) + V[i,j]*((T[i,j+1] - T[i,j-1])/(2*dy))
 
-    previousTerm = reynoldsTerm + magneticTerm
+    # print("reynoldsTerm ", reynoldsTerm)
+    # print("magneticTerm ", magneticTerm)
+    # print("previousTerm ", previousTerm)
 
-    return 
+    dT = reynoldsTerm + magneticTerm - previousTerm
+
+    return T[i,j] + dt*dT 

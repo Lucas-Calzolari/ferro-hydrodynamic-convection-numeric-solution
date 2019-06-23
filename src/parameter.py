@@ -1,5 +1,5 @@
-L = 1
-H = .4
+L = 4
+H = 2
 
 # n represents the number of nodes, not divisions
 WIDTH = 30
@@ -31,7 +31,7 @@ MAGNET_B = 0.4
 REYNOLDS = 50
 MAGNETIC_REYNOLDS = 1
 PRANDLT = 1
-MAGNETIC_ECKERT = 10
+MAGNETIC_ECKERT = 0.02
 
 if (MAGNET_B > MAGNET_S):
     print("MAGNET_S SHOULD BE BIGGER THAN B")
