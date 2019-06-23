@@ -1,87 +1,88 @@
 import numpy as np
-from parameter import L, H, WIDTH, HEIGHT, ERROR_TOLERANCE
+from parameter import L, H, WIDTH, HEIGHT, ERROR_TOLERANCE, T_ERROR_TOLERANCE
 import matrixProcessing
-import utils
 import math
+import sys
+import os
+from shutil import copyfile
 
-isFlowStable = False
-oldU = np.empty((WIDTH, HEIGHT))
-newU = np.ones((WIDTH, HEIGHT))
-matrixProcessing.setUBoundaries(newU)
-matrixProcessing.setUBoundaries(oldU)
+if __name__ == "__main__":
+    if len(sys.argv) == 1:
+        print("Usage: python main.py SIMULATION_NAME")
+        exit()
 
-oldV = np.empty((WIDTH, HEIGHT))
-newV = np.ones((WIDTH, HEIGHT))
-matrixProcessing.setVBoundaries(newV)
-matrixProcessing.setVBoundaries(oldV)
+    simulationName = sys.argv[1]
 
-HX = np.empty((WIDTH, HEIGHT))
-HY = np.empty((WIDTH, HEIGHT))
+    isFlowStable = False
+    oldU = np.empty((WIDTH, HEIGHT))
+    newU = np.ones((WIDTH, HEIGHT))
+    matrixProcessing.setUBoundaries(newU)
+    matrixProcessing.setUBoundaries(oldU)
 
-dU = np.empty((WIDTH, HEIGHT))
+    oldV = np.empty((WIDTH, HEIGHT))
+    newV = np.ones((WIDTH, HEIGHT))
+    matrixProcessing.setVBoundaries(newV)
+    matrixProcessing.setVBoundaries(oldV)
 
-matrixProcessing.calculateHX(HX)
-matrixProcessing.calculateHY(HY)
+    HX = np.empty((WIDTH, HEIGHT))
+    HY = np.empty((WIDTH, HEIGHT))
 
-biggestVariation = math.inf
-iterationNumber = 0
+    dU = np.empty((WIDTH, HEIGHT))
 
-while biggestVariation > ERROR_TOLERANCE:
-    aux = oldU
-    oldU = newU
-    newU = aux
+    matrixProcessing.calculateHX(HX)
+    matrixProcessing.calculateHY(HY)
 
-    aux = oldV
-    oldV = newV
-    newV = aux
+    biggestVariation = math.inf
+    iterationNumber = 0
 
-    matrixProcessing.calculateU(newU, oldU, oldV, HX, HY)
-    matrixProcessing.calculateV(newV, oldU, oldV, HX, HY)
+    while biggestVariation > ERROR_TOLERANCE:
+        aux = oldU
+        oldU = newU
+        newU = aux
 
-    biggestVariation = max( np.amax(np.absolute(newU-oldU)), np.amax(np.absolute(newV-oldV)) )
-    iterationNumber += 1
+        aux = oldV
+        oldV = newV
+        newV = aux
 
-    if (iterationNumber % 1000) == 0:
-        print("i = ", iterationNumber)
-        print("Current variation ", biggestVariation)
+        matrixProcessing.calculateU(newU, oldU, oldV, HX, HY)
+        matrixProcessing.calculateV(newV, oldU, oldV, HX, HY)
 
+        biggestVariation = max( np.amax(np.absolute(newU-oldU)), np.amax(np.absolute(newV-oldV)) )
+        iterationNumber += 1
 
-oldT = np.empty((WIDTH, HEIGHT))
-newT = np.ones((WIDTH, HEIGHT))
-matrixProcessing.setTBoundaries(newT)
-matrixProcessing.setTBoundaries(oldT)
-
-print("Start calculating T")
-biggestVariation = math.inf
-iterationNumber = 0
-while biggestVariation > ERROR_TOLERANCE:
-
-    aux = oldT
-    oldT = newT
-    newT = aux
-
-    matrixProcessing.calculateT(newT, oldT, oldU, oldV, HX, HY)
-
-    biggestVariation = np.amax(np.absolute(newT-oldT))
-    iterationNumber += 1
-    
-    if (iterationNumber % 1000) == 0:
-        print("i = ", iterationNumber)
-        print("Current variation ", biggestVariation)
+        if (iterationNumber % 1000) == 0:
+            print("i = ", iterationNumber)
+            print("Current variation ", biggestVariation)
 
 
+    oldT = np.empty((WIDTH, HEIGHT))
+    newT = np.ones((WIDTH, HEIGHT))
+    matrixProcessing.setTBoundaries(newT)
+    matrixProcessing.setTBoundaries(oldT)
 
-utils.printToFile("Final U\n")
-utils.printArrayMirrored(newU)
+    print("Start calculating T")
+    biggestVariation = math.inf
+    iterationNumber = 0
+    while biggestVariation > T_ERROR_TOLERANCE:
 
-utils.printToFile("Final V\n")
-utils.printArrayMirrored(newV)
+        aux = oldT
+        oldT = newT
+        newT = aux
 
-utils.printToFile("Final T\n")
-utils.printArrayMirrored(newT)
+        matrixProcessing.calculateT(newT, oldT, oldU, oldV, HX, HY)
 
-utils.printToFile("HX\n")
-utils.printArrayMirrored(HX)
+        biggestVariation = np.amax(np.absolute(newT-oldT))
+        iterationNumber += 1
+        
+        if (iterationNumber % 1000) == 0:
+            print("i = ", iterationNumber)
+            print("Current variation ", biggestVariation)
 
-utils.printToFile("HY\n")
-utils.printArrayMirrored(HY)
+
+    outputPath = "../build/" + simulationName + "/"
+    os.makedirs(outputPath)
+    np.savetxt( outputPath+ "U.csv", newU)
+    np.savetxt( outputPath+ "V.csv", newV)
+    np.savetxt( outputPath+ "T.csv", newT)
+    copyfile("./parameter.py", outputPath+ "parameter.py")
+
