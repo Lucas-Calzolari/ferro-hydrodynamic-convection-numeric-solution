@@ -19,6 +19,8 @@ def plotProfilesComparison(A, B, path=None):
     ax.plot(xA, yA, label='A')
     ax.plot(xB, yB, label='B')
 
+    ax.legend()
+
     if path is None:
       plt.show()
     else:
@@ -35,10 +37,28 @@ def plotProfiles(A, path=None):
 
     fig, ax = plt.subplots()  
     ax.plot(x, y, label='Profile ')
+
+    plt.hlines(y, np.zeros(y.shape[0]), x)
     if path is None:
       plt.show()
     else:
-      plt.savefig(path+percentage)
+      plt.savefig(path+"_X_"+percentage)
+
+  yProfiles = [math.floor(A.shape[1]*rp) for rp in relativeProfiles]
+  for i, fixed_Y  in enumerate(yProfiles):
+
+    percentage = str(math.floor(relativeProfiles[i]*100))
+    y = A[:,fixed_Y]
+    x = np.linspace(0, 100, A.shape[0])
+
+    fig, ax = plt.subplots()  
+    ax.plot(x, y, label='Profile ')
+
+    # plt.hlines(y, np.zeros(y.shape[0]), x)
+    if path is None:
+      plt.show()
+    else:
+      plt.savefig(path+"_Y_"+percentage)
   
 if __name__ == "__main__":
     if len(sys.argv) == 1:
@@ -53,9 +73,9 @@ if __name__ == "__main__":
     V = np.genfromtxt(outputPath + "V.csv")
     T = np.genfromtxt(outputPath + "T.csv")
 
-    # plotProfiles(U, path=outputPath+"U_PROFILE")
-    # plotProfiles(V, path=outputPath+"V_PROFILE")
-    # plotProfiles(T, path=outputPath+"T_PROFILE")
+    plotProfiles(U, path=outputPath+"U_PROFILE")
+    plotProfiles(V, path=outputPath+"V_PROFILE")
+    plotProfiles(T, path=outputPath+"T_PROFILE")
 
     if(len(sys.argv) > 2):
       comparisionName = sys.argv[2]
@@ -65,5 +85,7 @@ if __name__ == "__main__":
       VB = np.genfromtxt(outputPathB + "V.csv")
       TB = np.genfromtxt(outputPathB + "T.csv")
 
-      plotProfilesComparison(U,UB, path=outputPath+"COMPARISION_" + comparisionName+"U_")
+      plotProfilesComparison(U,UB, path=outputPath+"COMPARISION_" + comparisionName+"_U_")
+      plotProfilesComparison(V,VB, path=outputPath+"COMPARISION_" + comparisionName+"_V_")
+      plotProfilesComparison(T,TB, path=outputPath+"COMPARISION_" + comparisionName+"_T_")
 
