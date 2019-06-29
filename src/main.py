@@ -35,7 +35,7 @@ if __name__ == "__main__":
     biggestVariation = math.inf
     iterationNumber = 0
 
-    while biggestVariation > ERROR_TOLERANCE:
+    while biggestVariation > ERROR_TOLERANCE and iterationNumber < 200000:
         aux = oldU
         oldU = newU
         newU = aux
@@ -55,15 +55,22 @@ if __name__ == "__main__":
             print("Current variation ", biggestVariation)
 
 
+    outputPath = "../build/" + simulationName + "/"
+    os.makedirs(outputPath)
+    np.savetxt( outputPath+ "U.csv", newU)
+    np.savetxt( outputPath+ "V.csv", newV)
+    copyfile("./parameter.py", outputPath+ "parameter.py")
+
     oldT = np.empty((WIDTH, HEIGHT))
     newT = np.ones((WIDTH, HEIGHT))
     matrixProcessing.setTBoundaries(newT)
     matrixProcessing.setTBoundaries(oldT)
+    
 
     print("Start calculating T")
     biggestVariation = math.inf
     iterationNumber = 0
-    while biggestVariation > T_ERROR_TOLERANCE:
+    while biggestVariation > T_ERROR_TOLERANCE and iterationNumber < 200000:
 
         aux = oldT
         oldT = newT
@@ -79,10 +86,5 @@ if __name__ == "__main__":
             print("Current variation ", biggestVariation)
 
 
-    outputPath = "../build/" + simulationName + "/"
-    os.makedirs(outputPath)
-    np.savetxt( outputPath+ "U.csv", newU)
-    np.savetxt( outputPath+ "V.csv", newV)
     np.savetxt( outputPath+ "T.csv", newT)
-    copyfile("./parameter.py", outputPath+ "parameter.py")
 

@@ -1,9 +1,9 @@
-L = 4
-H = 2
+L = 1
+H = 3
 
 # n represents the number of nodes, not divisions
-WIDTH = 30
-HEIGHT = 15
+WIDTH = 40
+HEIGHT = 20
 
 U0 = 1
 T0 = 300
@@ -15,16 +15,16 @@ J = 2
 
 CHI = 1
 
-T_ERROR_TOLERANCE = 1
-ERROR_TOLERANCE = 1
+T_ERROR_TOLERANCE = 0.003
+ERROR_TOLERANCE = 0.00001
 
 dt = 0.000005
 
 #Magnet dimensions
-MAGNET_S = 5
-MAGNET_R = 5
-MAGNET_A = 0.4
-MAGNET_B = 0.4
+MAGNET_S = 2
+MAGNET_R = 2
+MAGNET_A = 0.8
+MAGNET_B = 0.8
 
 # Adimensional constants
 REYNOLDS = 50

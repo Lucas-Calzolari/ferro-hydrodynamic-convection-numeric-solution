@@ -3,7 +3,7 @@ import math
 import matplotlib.pyplot as plt
 import numpy as np
 
-def plotProfilesComparison(A, B, path=None):
+def plotProfilesComparison(A, B, path=None, xLabel="", yLabel=""):
   relativeProfiles = [1/5, 1/2, 4/5]
   xProfiles = [math.floor(A.shape[0]*rp) for rp in relativeProfiles]
   for i, fixed_X  in enumerate(xProfiles):
@@ -16,8 +16,11 @@ def plotProfilesComparison(A, B, path=None):
 
     fig, ax = plt.subplots()  
 
-    ax.plot(xA, yA, label='A')
-    ax.plot(xB, yB, label='B')
+    ax.plot(xA, yA, label='Escoamento magnético novo')
+    ax.plot(xB, yB, label='Escoamento magnético anterior')
+
+    plt.xlabel(xLabel)
+    plt.ylabel(yLabel)
 
     ax.legend()
 
@@ -26,7 +29,7 @@ def plotProfilesComparison(A, B, path=None):
     else:
       plt.savefig(path+percentage)
 
-def plotProfiles(A, path=None):
+def plotProfiles(A, path=None, xLabel="", yLabel=""):
   relativeProfiles = [1/5, 1/2, 4/5]
   xProfiles = [math.floor(A.shape[0]*rp) for rp in relativeProfiles]
   for i, fixed_X  in enumerate(xProfiles):
@@ -37,6 +40,9 @@ def plotProfiles(A, path=None):
 
     fig, ax = plt.subplots()  
     ax.plot(x, y, label='Profile ')
+
+    plt.xlabel(xLabel)
+    plt.ylabel(yLabel)
 
     plt.hlines(y, np.zeros(y.shape[0]), x)
     if path is None:
@@ -85,7 +91,7 @@ if __name__ == "__main__":
       VB = np.genfromtxt(outputPathB + "V.csv")
       TB = np.genfromtxt(outputPathB + "T.csv")
 
-      plotProfilesComparison(U,UB, path=outputPath+"COMPARISION_" + comparisionName+"_U_")
-      plotProfilesComparison(V,VB, path=outputPath+"COMPARISION_" + comparisionName+"_V_")
-      plotProfilesComparison(T,TB, path=outputPath+"COMPARISION_" + comparisionName+"_T_")
+      plotProfilesComparison(U,UB, path=outputPath+"COMPARISION_" + comparisionName+"_U_", xLabel="U", yLabel="Percentual de comprimento em Y na placa")
+      plotProfilesComparison(V,VB, path=outputPath+"COMPARISION_" + comparisionName+"_V_", xLabel="V", yLabel="Percentual de comprimento em Y na placa")
+      plotProfilesComparison(T,TB, path=outputPath+"COMPARISION_" + comparisionName+"_T_", xLabel="T", yLabel="Percentual de comprimento em Y na placa")
 
