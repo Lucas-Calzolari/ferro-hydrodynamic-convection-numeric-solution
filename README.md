@@ -6,7 +6,7 @@
 ## Move to the downloaded folder
     cd ferro-hydrodynamic-convection-numeric-solution/src
     
-## Maveke sure you have python 3.7 and pipenv installed.
+### Make sure you have python 3.7 and pipenv installed.
     
 ## Run
     pipenv run python src/main.py [nome_da_simulação] 
