@@ -1,6 +1,8 @@
-src/build/
-src/temp1/
-src/temp/
-src/__pycache__/
+*.egg-info/
+dist/
+ferro-hydrodynamic-convection-numeric-solution/build/
+ferro-hydrodynamic-convection-numeric-solution/temp1/
+ferro-hydrodynamic-convection-numeric-solution/temp/
+ferro-hydrodynamic-convection-numeric-solution/__pycache__/
 
 build/

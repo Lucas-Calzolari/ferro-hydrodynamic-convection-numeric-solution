@@ -1,13 +1,11 @@
 import numpy as np
-from parameter import dt, WIDTH, HEIGHT, U0, J, L, H, MI0, MAGNET_A as A, MAGNET_B as B, MAGNET_R as R, MAGNET_S as S,MAGNETIC_ECKERT, PRANDLT, REYNOLDS, MAGNETIC_REYNOLDS, CHI
 import math
 
-# K = J/(4*math.pi*MI0)
-K = 1
-dx = L/(WIDTH-1)
-dy = H/(HEIGHT-1)
 
-def calculateHXItem(i,j):
+
+def calculate_hx_item(params, i,j):
+    dx, dy, S, R, A, B, K = params["dx"], params["dy"], params["MAGNET_S"], params["MAGNET_R"], params["MAGNET_A"], params["MAGNET_B"], params["K"]
+
     X = dx*i
     Y = dy*j
 
@@ -39,7 +37,8 @@ def calculateHXItem(i,j):
 
     return K*math.log(firstTerm*secondTerm)
 
-def calculateHYItem(i,j):
+def calculate_hy_item(params, i,j):
+    dx, dy, S, R, A, B, K = params["dx"], params["dy"], params["MAGNET_S"], params["MAGNET_R"], params["MAGNET_A"], params["MAGNET_B"], params["K"]
     X = dx*i
     Y = dy*j
 
@@ -58,7 +57,8 @@ def calculateHYItem(i,j):
 
     return K*math.log(firstTerm*secondTerm)
 
-def calculateUItem(i,j, U, V, HX, HY):
+def calculate_u_item(params, i,j, U, V, HX, HY):
+    dx, dy, dt, REYNOLDS, CHI, MAGNETIC_REYNOLDS = params["dx"], params["dy"], params["dt"], params["REYNOLDS"], params["CHI"], params["MAGNETIC_REYNOLDS"]
     reynoldsTerm = ( (U[i+1,j] - 2*U[i,j] + U[i-1,j]) /(dx**2) + (U[i,j+1] - 2*U[i,j] +U[i,j-1])/(dy**2) ) / REYNOLDS
     magneticReynoldsTerm = (HX[i,j] * (HX[i+1,j] - HX[i-1,j])/(2*dx) + HY[i,j] * (HX[i,j+1] - HX[i,j-1])/(2*dy)) * CHI/MAGNETIC_REYNOLDS
     previousTerm = U[i,j] * ( U[i+1,j] - U[i-1,j] )/(2*dx) + V[i,j] * ( U[i,j+1] - U[i,j-1])/(2*dy)
@@ -67,7 +67,8 @@ def calculateUItem(i,j, U, V, HX, HY):
 
     return U[i,j] + dt*dU
 
-def calculateVItem(i,j, U, V, HX, HY):
+def calculate_v_item(params, i,j, U, V, HX, HY):
+    dx, dy, dt, REYNOLDS, CHI, MAGNETIC_REYNOLDS = params["dx"], params["dy"], params["dt"], params["REYNOLDS"], params["CHI"], params["MAGNETIC_REYNOLDS"]
     reynoldsTerm = ( (V[i+1,j] - 2*V[i,j] + V[i-1,j]) /(dx**2) + (V[i,j+1] - 2*V[i,j] +V[i,j-1])/(dy**2) ) / REYNOLDS
     magneticReynoldsTerm = (HX[i,j] * (HY[i+1,j] - HY[i-1,j])/(2*dx) + HY[i,j] * (HY[i,j+1] - HY[i,j-1])/(2*dy)) * CHI/MAGNETIC_REYNOLDS
     previousTerm = U[i,j] * ( V[i+1,j] - V[i-1,j] )/(2*dx) + V[i,j] * ( V[i,j+1] - V[i,j-1])/(2*dy)
@@ -76,7 +77,8 @@ def calculateVItem(i,j, U, V, HX, HY):
 
     return V[i,j] + dt*dV
 
-def calculateTItem(i,j, U, V, T, HX, HY):
+def calculate_t_item(params, i,j, U, V, T, HX, HY):
+    dx, dy, dt, REYNOLDS, CHI, MAGNETIC_REYNOLDS, PRANDLT = params["dx"], params["dy"], params["dt"], params["REYNOLDS"], params["CHI"], params["MAGNETIC_REYNOLDS"], params["PRANDLT"]
     reynoldsTerm = (((T[i+1,j]-2*T[i,j]+T[i-1,j])/(dx**2))+((T[i,j+1]-2*T[i,j]+T[i,j-1])/(dy**2)))/(REYNOLDS*PRANDLT)
     magneticTerm = (HX[i,j]**2 * ((U[i+1,j]-U[i-1,j])/(2*dx))+ HY[i,j]**2 * ((V[i,j+1]-V[i,j-1])/(2*dy))+HX[i,j]*HY[i,j]*((V[i+1,j]-V[i-1,j])/(2*dx)+(U[i,j+1]-U[i,j-1])/(2*dy)))* MAGNETIC_ECKERT*(1+CHI) 
     previousTerm = U[i,j]*((T[i+1,j]-T[i-1,j])/(2*dx)) + V[i,j]*((T[i,j+1] - T[i,j-1])/(2*dy))
